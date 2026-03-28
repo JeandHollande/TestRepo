@@ -1,4 +1,4 @@
-package com.example.fooddeliverysseapp.domain;
+package com.example.fooddeliverysseapp.service;
 
 public interface FoodService {
 

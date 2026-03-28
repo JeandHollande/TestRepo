@@ -4,26 +4,26 @@ import java.util.Random;
 
 import static com.example.fooddeliverysseapp.domain.FoodStatus.ORDER_PLACED;
 
-public class OrderFood {
+public class FoodOrder {
 
-    private final Integer id;
+    private final Integer m_id;
 
-    private FoodStatus status;
+    private FoodStatus m_status;
 
-    public OrderFood() {
-        this.id = new Random().nextInt(3000, 5000);
-        this.status = ORDER_PLACED;
+    public FoodOrder() {
+        this.m_id = new Random().nextInt(3000, 5000);
+        this.m_status = ORDER_PLACED;
     }
 
     public Integer getId() {
-        return id;
+        return m_id;
     }
 
     public FoodStatus getStatus() {
-        return status;
+        return m_status;
     }
 
     public void setStatus(FoodStatus status) {
-        this.status = status;
+        this.m_status = status;
     }
 }

@@ -1,32 +1,37 @@
 package com.example.fooddeliverysseapp.domain.observers;
 
-import com.example.fooddeliverysseapp.ModelFixture;
-import com.example.fooddeliverysseapp.domain.EventService;
+import static com.example.fooddeliverysseapp.domain.FoodStatus.ORDER_PLACED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.example.fooddeliverysseapp.domain.FoodStatus.ORDER_PLACED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.example.fooddeliverysseapp.ModelFixture;
+import com.example.fooddeliverysseapp.service.EventService;
 
 @ExtendWith(MockitoExtension.class)
-class OrderObservableTest {
+class OrderObservableTest
+{
 
-    @Mock
-    private EventService eventService;
+  @Mock
+  private EventService eventService;
 
-    @Test
-    void shouldUpdateAnOrderObservable() {
+  @Test
+  void shouldUpdateAnOrderObservable()
+  {
 
-        var observer = new OrderObservable(eventService);
-        var food = ModelFixture.buildFood();
+    var observer = new OrderObservable(eventService);
+    var food = ModelFixture.buildFood();
 
-        Mockito.doNothing().when(eventService).sendEvent(food, "order");
+    Mockito.doNothing().when(eventService).sendEvent(food,
+                                                     "order");
 
-        observer.update(food);
+    observer.update(food);
 
-        assertEquals(ORDER_PLACED, food.getStatus());
-    }
+    assertEquals(ORDER_PLACED,
+                 food.getStatus());
+  }
 }

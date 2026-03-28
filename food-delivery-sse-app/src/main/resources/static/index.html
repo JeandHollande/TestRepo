@@ -44,7 +44,9 @@
     eventSource.addEventListener("delivered", (event) => renderEvent(event));
 	
 	function createOrder() {
-	//	event.preventDefault(); // stops page reload
+		// stops page reload --> Not required since we do not add a Post form: If you send a Post form the browser 
+		// needs to receive a new HTML page (which is now not necessary because only a 'bare' button without enclosing form is used).
+	    //	event.preventDefault(); 
 	    fetch('/order-food', {
 	        method: 'POST'
 	    }).then(response => {

@@ -1,25 +1,28 @@
-package com.example.fooddeliverysseapp.domain.observers;
+package com.example.fooddeliverysseapp.listener;
 
 import static com.example.fooddeliverysseapp.domain.FoodStatus.DELIVERED;
-import static com.example.fooddeliverysseapp.domain.FoodStatus.ON_THE_WAY;
-import static org.awaitility.Awaitility.setDefaultTimeout;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.fooddeliverysseapp.ModelFixture;
+import com.example.fooddeliverysseapp.listener.FoodOrderHandlingListener;
 import com.example.fooddeliverysseapp.service.EventService;
 
 @ExtendWith(MockitoExtension.class)
-class DeliveredObservableTest
+class OrderFoodListenerTest
 {
+
+  @InjectMocks
+  private FoodOrderHandlingListener orderFoodListener;
 
   @Mock
   private EventService eventService;
@@ -27,23 +30,18 @@ class DeliveredObservableTest
   @BeforeEach
   void init()
   {
-    setDefaultTimeout(Duration.ofMinutes(1L));
+    Awaitility.setDefaultTimeout(Duration.ofMinutes(1L));
   }
 
   @Test
-  void shouldUpdateADeliveredObservable()
+  void shouldNotifyAllObservables()
   {
 
-    var observer = new DeliveredObservable(eventService);
     var food = ModelFixture.buildFood();
-    food.setStatus(ON_THE_WAY);
 
-    Mockito.doNothing().when(eventService).sendEvent(food,
-                                                     "delivered");
+    orderFoodListener.notifyAll(food);
 
-    observer.update(food);
-
-    assertEquals(DELIVERED,
-                 food.getStatus());
+    Awaitility.await().untilAsserted(() -> assertEquals(DELIVERED,
+                                                        food.getStatus()));
   }
 }

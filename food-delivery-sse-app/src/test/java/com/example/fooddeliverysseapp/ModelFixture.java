@@ -1,13 +1,13 @@
 package com.example.fooddeliverysseapp;
 
-import com.example.fooddeliverysseapp.domain.OrderFood;
+import com.example.fooddeliverysseapp.domain.FoodOrder;
 
 public class ModelFixture {
 
     private ModelFixture() {}
 
-    public static OrderFood buildFood() {
+    public static FoodOrder buildFood() {
 
-        return new OrderFood();
+        return new FoodOrder();
     }
 }
