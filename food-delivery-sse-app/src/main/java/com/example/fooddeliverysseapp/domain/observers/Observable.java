@@ -33,5 +33,11 @@ public abstract class Observable
                              eventName);
   }
 
+  protected void sendLogging(String logText)
+  {
+    m_eventService.sendEvent(logText,
+                             "logEvent");
+  }
+
   public abstract void update(FoodOrder orderFood);
 }

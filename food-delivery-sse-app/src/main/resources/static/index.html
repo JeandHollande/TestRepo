@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Food Delivery App</title>
 	<style>
-	    #logBlock {
+	    #eventLogBlock {
 			position: absolute;
 			top: 0px;
 			left: 500px;
@@ -28,31 +28,52 @@
         <div id="order-status"></div>
     </div>
 	
-	<pre id="logBlock"></pre>
+	<pre id="eventLogBlock"></pre>
 	
 	<button onclick="createOrder()">Create order</button>
 	<p>
-	<TextArea>Vul hier maar wat in</TextArea>
+	<button onclick="createLogMessage()">Create log message</button>
+    <p>
+	<TextArea id="adHocLogBlock"></TextArea>
 </body>
 <script>
-	const logBlockElement = document.querySelector("#logBlock");
-    var eventSource = new EventSource("/order-status");
+    const eventLogBlockElement = document.querySelector("#eventLogBlock");
+    const adHocBlockElement = document.querySelector("#adHocLogBlock");
+    var eventSource = new EventSource("/order-status"); // EventSource API: See https://developer.mozilla.org/en-US/docs/Web/API/EventSource
 
     eventSource.addEventListener("order", (event) => renderEvent(event));
     eventSource.addEventListener("kitchen", (event) => renderEvent(event));
     eventSource.addEventListener("on-the-way", (event) => renderEvent(event));
     eventSource.addEventListener("delivered", (event) => renderEvent(event));
+	eventSource.addEventListener("logEvent", (event) => addAdHocLogLine(event.data));
 	
 	function createOrder() {
-		// stops page reload --> Not required since we do not add a Post form: If you send a Post form the browser 
-		// needs to receive a new HTML page (which is now not necessary because only a 'bare' button without enclosing form is used).
-	    //	event.preventDefault(); 
+		/* stops page reload --> Not required since we do not add a Post form: If you send a Post form the browser 
+		   needs to receive a new HTML page (which is now not necessary because only a 'bare' button without enclosing form is used).
+		*/
+	    //   event.preventDefault(); 
+
 	    fetch('/order-food', {
 	        method: 'POST'
 	    }).then(response => {
-	        log("Order request sent");
+	        addEventLogLine("Order request sent");
 	    }).catch(err => {
-	        log("Error sending order: " + err);
+	        addEventLogLine("Error sending order: " + err);
+	    });
+	}
+
+	function createLogMessage() {
+		/* stops page reload --> Not required since we do not add a Post form: If you send a Post form the browser 
+		   needs to receive a new HTML page (which is now not necessary because only a 'bare' button without enclosing form is used).
+		*/
+	    //   event.preventDefault(); 
+
+	    fetch('/logMessage', {
+	        method: 'POST'
+	    }).then(response => {
+	        addEventLogLine("Logmessage request sent");
+	    }).catch(err => {
+	        addEventLogLine("Error sending Logmessage request: " + err);
 	    });
 	}
 
@@ -66,16 +87,21 @@
         data.appendChild(p);
     }
 	
-	function log(text) {
+	function addEventLogLine(text) {
 	    // Adds the provided text to
-	    logBlockElement.textContent += text + "\n";
+	    eventLogBlockElement.textContent += text + "\n";
+	}
+
+	function addAdHocLogLine(text) {
+	    // Adds the provided text to
+	    adHocBlockElement.textContent += text + "\n";
 	}
 
     function getOrderStatus(event) {
 
         var order = JSON.parse(event.data);
 		
-        log("Event data ontvangen");
+        addEventLogLine("Event data ontvangen");
 		
         switch(order.status) {
             case 'ORDER_PLACED':
