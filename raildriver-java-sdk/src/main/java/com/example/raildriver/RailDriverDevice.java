@@ -33,7 +33,7 @@ public class RailDriverDevice
   @Override
   public void run()
   {
-
+    ReportDebugger reportDebugger = new ReportDebugger();
     m_device.open();
 
     byte[] buffer = new byte[64];
@@ -42,6 +42,7 @@ public class RailDriverDevice
 
       int n = m_device.read(buffer,
                             1000);
+      reportDebugger.printDiff(buffer);
 
       if (n > 0)
       {
