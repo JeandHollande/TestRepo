@@ -14,6 +14,7 @@ public class RailDriverLedTester
   private static final byte LED_COMMAND = (byte) 134; // Command code to set the LEDs.
 
   public static void main(String[] args)
+      throws InterruptedException
   {
     HidServices hidServices = HidManager.getHidServices();
 
@@ -28,10 +29,21 @@ public class RailDriverLedTester
       return;
     }
 
-    byte[] ledBufferContent = createLEDBufferContent("abc");
-    sendMessage(hidDevice,
-                ledBufferContent,
-                LED_COMMAND);
+    for (String display : Arrays.asList("012",
+                                        "Abc",
+                                        "345",
+                                        "678",
+                                        "0.9",
+                                        "def",
+                                        "opq",
+                                        "xyz")) // TODO: xyz werkt niet, het algoritme 'rammelt' vermoedelijk omdat het een 7- ipv 9-segment display is.
+    {
+      byte[] ledBufferContent = createLEDBufferContent(display);
+      sendMessage(hidDevice,
+                  ledBufferContent,
+                  LED_COMMAND);
+      Thread.sleep(1000);
+    }
   }
 
   public static byte[] createLEDBufferContent(String ledstring)
@@ -60,7 +72,9 @@ public class RailDriverLedTester
     Arrays.fill(buff,
                 (byte) 0);
 
-    int outIdx = 2;
+    int outIdx = 3;
+
+    buff[0] = (byte) 0x86;
     for (int i = 0; i < ledstring.length(); i++)
     {
       char c = ledstring.charAt(i);
@@ -105,6 +119,8 @@ public class RailDriverLedTester
       }
       else
       { // everything else is ignored
+        System.out.printf("Character cannot be displayed: %s%n",
+                          c);
         outIdx++;
       }
       outIdx--;
@@ -121,6 +137,13 @@ public class RailDriverLedTester
       }
     }
 
+    System.out.printf("Sending data: ");
+    for (int i = 1; i <= 3; i++)
+    {
+      System.out.printf("%02X ",
+                        buff[i]);
+    }
+    System.out.println();
     return buff;
   }
 
