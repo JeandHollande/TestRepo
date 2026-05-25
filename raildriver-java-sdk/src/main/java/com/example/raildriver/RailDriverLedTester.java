@@ -36,7 +36,8 @@ public class RailDriverLedTester
                                         "0.9",
                                         "def",
                                         "opq",
-                                        "xyz")) // TODO: xyz werkt niet, het algoritme 'rammelt' vermoedelijk omdat het een 7- ipv 9-segment display is.
+                                        "xyz",
+                                        "JBS")) // TODO: xyz werkt niet, het algoritme 'rammelt' vermoedelijk omdat het een 7- ipv 9-segment display is.
     {
       byte[] ledBufferContent = createLEDBufferContent(display);
       sendMessage(hidDevice,
