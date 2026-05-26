@@ -19,9 +19,11 @@ public class RailDriverDisplayDriver
 
   private final HidDevice device;
 
-  // calibration result
-  private int offset = 1; // default guess
-  private int packetSize = 7;
+  // On linux the first byte should be 0x00, on linux this should be 
+  private int offset = PlatformUtil.isWindows() ? 1 : 0;
+  // Windows: byte 1 is LED_COMMAND, byte 2,3,4 is LED1,LED2,LED3 
+  // Linux: byte 0 is LED_COMMAND, byte 1,2,3 is LED1,LED2,LED3 
+  private int packetSize = PlatformUtil.isWindows() ? 4 : 3;
 
   public RailDriverDisplayDriver(HidDevice device)
   {
@@ -52,8 +54,8 @@ public class RailDriverDisplayDriver
     //    display.autoCalibrate();
 
     // 2. Pick best result and lock it
-    display.setLayout(7,
-                      1); // example only
+    //    display.setLayout(7,
+    //                      1); // example only
 
     // 3. Normal usage
     display.setText("JbS");
