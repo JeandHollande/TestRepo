@@ -10,8 +10,16 @@ public class RailDriverDisplayDriver
 {
   private static final short VENDOR_ID = 0x05F3;
   private static final short PRODUCT_ID = 0x00D2;
-  public static final String SERIAL_NUMBER = null;
+  private static final String SERIAL_NUMBER = null;
   private static final byte LED_COMMAND = (byte) 134; // Command code to set the LEDs.
+  public static final byte SEG_A = 0x01;
+  public static final byte SEG_B = 0x02;
+  public static final byte SEG_C = 0x04;
+  public static final byte SEG_D = 0x08;
+  public static final byte SEG_E = 0x10;
+  public static final byte SEG_F = 0x20;
+  public static final byte SEG_G = 0x40;
+  public static final byte SEG_DP = (byte) 0x80;
 
   private static final int WIDTH = 3;
 
@@ -50,19 +58,49 @@ public class RailDriverDisplayDriver
 
     display = new RailDriverDisplayDriver(hidDevice);
 
-    // 1. Run calibration once
-    //    display.autoCalibrate();
+    display.setSegmentsAndSleep(SEG_A,
+                                SEG_A,
+                                SEG_A,
+                                500);
 
-    // 2. Pick best result and lock it
-    //    display.setLayout(7,
-    //                      1); // example only
+    //    int ms = 1000;
+    //    testText(display,
+    //             ms);
 
-    // 3. Normal usage
-    display.setText("JbS");
-    display.send();
-    Thread.sleep(1000);
+    for (int i = 0; i < 8; i++)
+    {
 
-    for (String text : Arrays.asList("012",
+      byte byteContent = (byte) (1 << i);
+
+      String binary =
+          String.format("%8s",
+                        Integer.toBinaryString(byteContent & 0xFF))
+              .replace(' ',
+                       '0');
+
+      System.out.printf(
+                        "bit %d = %02X --> %s%n",
+                        i,
+                        byteContent,
+                        binary);
+
+      display.setSegmentsAndSleep(byteContent,
+                                  byteContent,
+                                  byteContent,
+                                  3000);
+    }
+  }
+
+  private static void testText(RailDriverDisplayDriver display,
+      int ms)
+      throws InterruptedException
+  {
+    for (String text : Arrays.asList("0",
+                                     "1",
+                                     "0  ",
+                                     " 0 ",
+                                     "  0",
+                                     "012",
                                      "Abc",
                                      "345",
                                      "678",
@@ -72,10 +110,20 @@ public class RailDriverDisplayDriver
                                      "xyz",
                                      "JBS")) // TODO: xyz werkt niet, het algoritme 'rammelt' vermoedelijk omdat het een 7- ipv 9-segment display is.
     {
-      display.setText(text);
-      display.send();
-      Thread.sleep(1000);
+      displayAndSleep(display,
+                      ms,
+                      text);
     }
+  }
+
+  private static void displayAndSleep(RailDriverDisplayDriver display,
+      int ms,
+      String text)
+      throws InterruptedException
+  {
+    display.setText(text);
+    display.send();
+    Thread.sleep(ms);
   }
 
   // ----------------------------
@@ -92,24 +140,39 @@ public class RailDriverDisplayDriver
   {
     clear();
 
-    int pos = 0;
+    int digitPosition = 0; // 0 is the first digit, 2 is the last digit
 
-    for (int i = 0; i < text.length() && pos < WIDTH; i++)
+    for (int i = 0; i < text.length() && digitPosition < WIDTH; i++)
     {
       char c = text.charAt(i);
 
       if (c == '.')
       {
-        if (pos > 0)
+        if (digitPosition > 0)
         {
-          framebuffer[pos - 1] |= (byte) 0x80;
+          framebuffer[digitPosition - 1] |= (byte) 0x80;
         }
         continue;
       }
 
-      framebuffer[pos] = encode(c);
-      pos++;
+      framebuffer[digitPosition] = encode(c);
+      digitPosition++;
     }
+  }
+
+  private void setSegmentsAndSleep(byte segmentsDigitPosition1,
+      byte segmentsDigitPosition2,
+      byte segmentsDigitPosition3,
+      int ms)
+      throws InterruptedException
+  {
+    clear();
+
+    framebuffer[0] = segmentsDigitPosition1;
+    framebuffer[1] = segmentsDigitPosition2;
+    framebuffer[2] = segmentsDigitPosition3;
+    send();
+    Thread.sleep(ms);
   }
 
   private byte encode(char c)
@@ -168,7 +231,6 @@ public class RailDriverDisplayDriver
 
   private byte[] buildPacket()
   {
-
     byte[] packet = new byte[packetSize];
 
     // header (RailDriver command byte)
@@ -186,62 +248,6 @@ public class RailDriverDisplayDriver
 
     return packet;
   }
-
-  // ----------------------------
-  // Auto calibration
-  // ----------------------------
-
-  public void autoCalibrate()
-  {
-
-    System.out.println("Starting RailDriver calibration...");
-
-    int[] candidateSizes =
-    {
-        7, 8, 9
-    };
-    int[] candidateOffsets =
-    {
-        1, 2
-    };
-
-    String test = "JbS";
-
-    for (int size : candidateSizes)
-    {
-      for (int off : candidateOffsets)
-      {
-
-        this.packetSize = size;
-        this.offset = off;
-
-        setText(test);
-        send();
-
-        sleep(400);
-
-        System.out.println(
-                           "Tried size=" + size + " offset=" + off);
-      }
-    }
-
-    System.out.println("Calibration done. Pick the setting that shows correct output.");
-  }
-
-  private void sleep(long ms)
-  {
-    try
-    {
-      Thread.sleep(ms);
-    }
-    catch (Exception ignored)
-    {
-    }
-  }
-
-  // ----------------------------
-  // Manual override
-  // ----------------------------
 
   public void setLayout(int packetSize,
       int offset)
