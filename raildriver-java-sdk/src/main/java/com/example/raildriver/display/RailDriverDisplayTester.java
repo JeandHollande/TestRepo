@@ -9,7 +9,7 @@ import org.hid4java.HidServices;
 import com.example.raildriver.util.BinaryUtil;
 import com.example.raildriver.util.PlatformUtil;
 
-public class RailDriverDisplayDriver
+public class RailDriverDisplayTester
 {
   private static final short VENDOR_ID = 0x05F3;
   private static final short PRODUCT_ID = 0x00D2;
@@ -36,7 +36,7 @@ public class RailDriverDisplayDriver
   // Linux: byte 0 is LED_COMMAND, byte 1,2,3 is LED1,LED2,LED3 
   private int packetSize = PlatformUtil.isWindows() ? 4 : 3;
 
-  public RailDriverDisplayDriver(HidDevice device)
+  public RailDriverDisplayTester(HidDevice device)
   {
     this.device = device;
     clear();
@@ -46,7 +46,7 @@ public class RailDriverDisplayDriver
       throws InterruptedException
   {
     HidServices hidServices = HidManager.getHidServices();
-    RailDriverDisplayDriver display;
+    RailDriverDisplayTester display;
 
     //    showHidDeviceDetails(hidServices);
 
@@ -59,7 +59,7 @@ public class RailDriverDisplayDriver
       return;
     }
 
-    display = new RailDriverDisplayDriver(hidDevice);
+    display = new RailDriverDisplayTester(hidDevice);
 
     display.setSegmentsAndSleep(SEG_A,
                                 SEG_A,
@@ -90,7 +90,7 @@ public class RailDriverDisplayDriver
     }
   }
 
-  private static void testText(RailDriverDisplayDriver display,
+  private static void testText(RailDriverDisplayTester display,
       int ms)
       throws InterruptedException
   {
@@ -115,7 +115,7 @@ public class RailDriverDisplayDriver
     }
   }
 
-  private static void displayAndSleep(RailDriverDisplayDriver display,
+  private static void displayAndSleep(RailDriverDisplayTester display,
       int ms,
       String text)
       throws InterruptedException

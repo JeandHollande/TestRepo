@@ -6,7 +6,7 @@ import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
 
-public class RailDriverApp
+public class RailDriverControlsTester
 {
   private static final short VENDOR_ID = 0x05F3;
   private static final short PRODUCT_ID = 0x00D2;
