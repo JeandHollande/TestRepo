@@ -1,4 +1,6 @@
-package com.example.raildriver;
+package com.example.raildriver.control;
+
+import com.example.raildriver.util.BinaryUtil;
 
 public class ReportDebugger
 {
@@ -24,10 +26,13 @@ public class ReportDebugger
       {
 
         System.out.printf(
-                          "Byte %02d changed: %02X -> %02X%n",
+                          "Byte %02d changed: %02X -> %02X bitpattern: %s enum value:%s%n",
                           i,
                           oldVal,
-                          newVal);
+                          newVal,
+                          BinaryUtil.showBitPattern((byte) newVal),
+                          RDInputControl.getEnumInstance(i,
+                                                         (byte) newVal));
       }
     }
 

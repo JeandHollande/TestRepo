@@ -1,4 +1,4 @@
-package com.example.raildriver;
+package com.example.raildriver.control;
 
 import java.util.Arrays;
 
@@ -30,6 +30,7 @@ public class RailDriverApp
 
     RailDriverDevice rdDevice = new RailDriverDevice(hidDevice);
 
+    // Lambda will get executed when change is detected in throttle related byte
     //    rdDevice.addListener(state -> System.out.println("Throttle: " + state.throttle()));
 
     new Thread(rdDevice).start();

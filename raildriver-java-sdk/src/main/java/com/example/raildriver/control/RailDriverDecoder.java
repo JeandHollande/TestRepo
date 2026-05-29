@@ -1,4 +1,4 @@
-package com.example.raildriver;
+package com.example.raildriver.control;
 
 public class RailDriverDecoder {
 

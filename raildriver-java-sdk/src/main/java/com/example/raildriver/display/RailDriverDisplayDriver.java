@@ -1,10 +1,13 @@
-package com.example.raildriver;
+package com.example.raildriver.display;
 
 import java.util.Arrays;
 
 import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
+
+import com.example.raildriver.util.BinaryUtil;
+import com.example.raildriver.util.PlatformUtil;
 
 public class RailDriverDisplayDriver
 {
@@ -63,26 +66,22 @@ public class RailDriverDisplayDriver
                                 SEG_A,
                                 500);
 
-    //    int ms = 1000;
-    //    testText(display,
-    //             ms);
+    int ms = 1000;
+    testText(display,
+             ms);
 
     for (int i = 0; i < 8; i++)
     {
 
       byte byteContent = (byte) (1 << i);
 
-      String binary =
-          String.format("%8s",
-                        Integer.toBinaryString(byteContent & 0xFF))
-              .replace(' ',
-                       '0');
+      String bitPattern = BinaryUtil.showBitPattern(byteContent);
 
       System.out.printf(
                         "bit %d = %02X --> %s%n",
                         i,
                         byteContent,
-                        binary);
+                        bitPattern);
 
       display.setSegmentsAndSleep(byteContent,
                                   byteContent,
