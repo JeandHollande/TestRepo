@@ -13,38 +13,51 @@ public class RailDriverControlsDecoder
     int throttle = Byte.toUnsignedInt(data[1]);
     int autoBreak = Byte.toUnsignedInt(data[2]);
     int indBreak = Byte.toUnsignedInt(data[3]);
-    RDButton rdButton;
+    RDButton rdButton = getRDButton(data);
     Integer sendThrottleValue = null;
     Integer sendAutoBrakeValue = null;
     Integer sendIndBrakeValue = null;
     RDButton sendRDButton = null;
 
-    if (throttle != lastThrottle)
+    if (aboveThreshHold(lastThrottle,
+                        throttle))
     {
       lastThrottle = throttle;
       sendThrottleValue = throttle;
     }
-    if (autoBreak != lastAutoBrakeValue)
+    if (aboveThreshHold(lastAutoBrakeValue,
+                        autoBreak))
     {
       lastAutoBrakeValue = autoBreak;
       sendAutoBrakeValue = autoBreak;
     }
-    if (indBreak != lastIndBrakeValue)
+    if (aboveThreshHold(lastIndBrakeValue,
+                        indBreak))
     {
       lastIndBrakeValue = indBreak;
       sendIndBrakeValue = indBreak;
     }
-    rdButton = getRDButton(data);
     if (rdButton != lastRDButton)
     {
       lastRDButton = rdButton;
       sendRDButton = rdButton;
     }
 
+    if (sendThrottleValue == null && sendAutoBrakeValue == null && sendIndBrakeValue == null && sendRDButton == null)
+    {
+      return null;
+    }
+
     return new RailDriverControlsState(sendThrottleValue,
-                                              sendAutoBrakeValue,
-                                              sendIndBrakeValue,
-                                              sendRDButton);
+                                       sendAutoBrakeValue,
+                                       sendIndBrakeValue,
+                                       sendRDButton);
+  }
+
+  private boolean aboveThreshHold(int previousValue,
+      int newValue)
+  {
+    return Math.abs(previousValue - newValue) > 5;
   }
 
   private RDButton getRDButton(byte[] data)
@@ -54,7 +67,7 @@ public class RailDriverControlsDecoder
       if (data[i] != (byte) 0x00)
       {
         return RDButton.getEnumInstance(i,
-                                              data[i]);
+                                        data[i]);
       }
     }
 

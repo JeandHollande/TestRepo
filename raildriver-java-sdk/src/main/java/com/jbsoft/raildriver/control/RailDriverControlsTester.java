@@ -27,9 +27,10 @@ public class RailDriverControlsTester
 
     RailDriverDevice rdDevice = new RailDriverDevice(hidDevice);
 
+    RailDriverControlsListener rdCrontrolsListener = RailDriverControlsTester::handleThrottleState;
     // Lambda will get executed when change is detected in throttle related byte
     // This lambda is an implementation of RailDriverListener.onState(RailDriverThrottleState)
-    rdDevice.addListener(RailDriverControlsTester::handleThrottleState);
+    rdDevice.addListener(rdCrontrolsListener);
 
     new Thread(rdDevice).start();
   }
@@ -79,6 +80,12 @@ public class RailDriverControlsTester
 
   private static void handleThrottleState(RailDriverControlsState rdControlsState)
   {
+    if (rdControlsState == null)
+    {
+      // Indicates controls did not change
+      return;
+    }
+
     if (rdControlsState.throttle() != null)
     {
       System.out.printf("Throttle: %1$d (%1$02X)%n",
