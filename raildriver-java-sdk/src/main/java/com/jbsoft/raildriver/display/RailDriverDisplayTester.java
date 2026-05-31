@@ -1,4 +1,4 @@
-package com.example.raildriver.display;
+package com.jbsoft.raildriver.display;
 
 import java.util.Arrays;
 
@@ -6,8 +6,8 @@ import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
 
-import com.example.raildriver.util.BinaryUtil;
-import com.example.raildriver.util.PlatformUtil;
+import com.jbsoft.raildriver.util.BinaryUtil;
+import com.jbsoft.raildriver.util.PlatformUtil;
 
 public class RailDriverDisplayTester
 {

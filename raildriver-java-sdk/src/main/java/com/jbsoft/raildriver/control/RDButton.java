@@ -1,10 +1,10 @@
-package com.example.raildriver.control;
+package com.jbsoft.raildriver.control;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public enum RDInputControl
+public enum RDButton
 {
   // example enum instances — replace or extend as needed
   BUTTON_TOP_ROW_1(7, (byte) 0x01),
@@ -40,11 +40,11 @@ public enum RDInputControl
   private final byte m_byteContent;
 
   // lookup map for efficient reverse lookup
-  private static final Map<Key, RDInputControl> ENUM_INSTANCES_BY_FIELDS = new HashMap<>();
+  private static final Map<Key, RDButton> ENUM_INSTANCES_BY_FIELDS = new HashMap<>();
 
   static
   {
-    for (RDInputControl rdInputControl : values())
+    for (RDButton rdInputControl : values())
     {
       ENUM_INSTANCES_BY_FIELDS.put(new Key(rdInputControl.m_byteSequenceNumber,
                                            rdInputControl.m_byteContent),
@@ -52,7 +52,7 @@ public enum RDInputControl
     }
   }
 
-  RDInputControl(int byteSequenceNumber,
+  RDButton(int byteSequenceNumber,
       byte byteContent)
   {
     m_byteSequenceNumber = byteSequenceNumber;
@@ -73,7 +73,7 @@ public enum RDInputControl
   /**
    * Find the enum instance that matches the given id (byte) and code (int). Returns null if none matches.
    */
-  public static RDInputControl getEnumInstance(int byteSequenceNumber,
+  public static RDButton getEnumInstance(int byteSequenceNumber,
       byte byteContent)
   {
     return ENUM_INSTANCES_BY_FIELDS.get(new Key(byteSequenceNumber,

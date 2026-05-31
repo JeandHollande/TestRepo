@@ -1,4 +1,4 @@
-package com.example.raildriver.util;
+package com.jbsoft.raildriver.util;
 
 public final class PlatformUtil
 {

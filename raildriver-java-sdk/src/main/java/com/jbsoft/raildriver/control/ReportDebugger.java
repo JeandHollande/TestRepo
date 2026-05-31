@@ -1,6 +1,6 @@
-package com.example.raildriver.control;
+package com.jbsoft.raildriver.control;
 
-import com.example.raildriver.util.BinaryUtil;
+import com.jbsoft.raildriver.util.BinaryUtil;
 
 public class ReportDebugger
 {
@@ -31,7 +31,7 @@ public class ReportDebugger
                           oldVal,
                           newVal,
                           BinaryUtil.showBitPattern((byte) newVal),
-                          RDInputControl.getEnumInstance(i,
+                          RDButton.getEnumInstance(i,
                                                          (byte) newVal));
       }
     }
